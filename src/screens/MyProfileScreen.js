@@ -1,10 +1,11 @@
-// MyProfileScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
-import { getUserData, updateProfile, initializeDatabase } from '../database/database';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './MyProfileStyles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'http://172.20.10.7:5000/api/users'; // Update this with your backend URL
 
 const MyProfileScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -14,57 +15,51 @@ const MyProfileScreen = ({ navigation }) => {
   const [address, setAddress] = useState('');
 
   useEffect(() => {
-    // Initialize the database once when the component mounts
-    initializeDatabase();
-
     const loadProfileData = async () => {
-      // Retrieve emp_id from AsyncStorage
-      const storedUserData = await AsyncStorage.getItem('userData');
-      if (storedUserData) {
-        const { emp_id } = JSON.parse(storedUserData);
+      try {
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const { emp_id } = JSON.parse(storedUserData);
 
-        // Log emp_id to verify it's being fetched correctly
-        console.log('emp_id from AsyncStorage:', emp_id);
+          // Fetch user data from the backend
+          const response = await axios.get(`${API_URL}/profile/${emp_id}`);
+          const userData = response.data;
+          console.log(userData);
+          
 
-        if (emp_id) {
-          getUserData(emp_id, (error, userData) => {
-            if (error) {
-              console.error('Error loading user data:', error);
-            } else if (userData) {
-              // Log the retrieved user data to the console
-              console.log('User Data retrieved from DB:', userData);
-
-              setName(userData.name);
-              setEmpId(userData.emp_id);
-              setPhone(userData.phone);
-              setEmail(userData.email);
-              setAddress(userData.address || '');
-            } else {
-              console.log('No user data found for emp_id:', emp_id);
-            }
-          });
+          // Update state with user data
+          setName(userData.name);
+          setEmpId(userData.emp_id);
+          setPhone(userData.phone || '');
+          setEmail(userData.email || '');
+          setAddress(userData.address || '');
+        } else {
+          console.log('No user data found in AsyncStorage.');
         }
-      } else {
-        console.log('No user data found in AsyncStorage.');
+      } catch (error) {
+        console.error('Error loading user data:', error.response?.data || error.message);
+        Alert.alert('Error', 'Failed to load user data.');
       }
     };
 
     loadProfileData();
   }, []);
 
-  const handleProfileUpdate = () => {
-    // Update profile in the database
-    updateProfile(name, phone, email, address, empId, (error) => {
-      if (error) {
-        Alert.alert('Error', 'Failed to update profile');
-      } else {
-        // Show success message
-        Alert.alert('Success', 'Profile updated successfully');
-        
-        // Optionally, navigate back or refresh screen
-        navigation.goBack();
-      }
-    });
+  const handleProfileUpdate = async () => {
+    try {
+      const response = await axios.put(`${API_URL}/profile/${empId}`, {
+        name,
+        phone,
+        email,
+        address,
+      });
+
+      Alert.alert('Success', response.data.message);
+      navigation.goBack(); // Optionally go back after update
+    } catch (error) {
+      console.error('Error updating profile:', error.response?.data || error.message);
+      Alert.alert('Error', 'Failed to update profile.');
+    }
   };
 
   return (

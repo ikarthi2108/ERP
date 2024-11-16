@@ -11,7 +11,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { login } from '../services/authService';
-import { initializeDatabase } from '../database/database';
 import styles from './LoginStyles';
 
 const LoginScreen = ({ navigation }) => {
@@ -20,9 +19,7 @@ const LoginScreen = ({ navigation }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  useEffect(() => {
-    initializeDatabase();
-  }, []);
+
 
   const logStoredUserData = async () => {
     try {

@@ -1,27 +1,15 @@
-import SQLite from 'react-native-sqlite-storage';
+import axios from 'axios';
 
-const database = SQLite.openDatabase(
-  { name: 'ERPDB', location: 'default' },
-  () => console.log('Database opened successfully'),
-  (error) => console.error('Failed to open database:', error)
-);
+const API_URL = 'http://172.20.10.7:5000/api/users'; 
 
-export const login = (username, password) => {
-  return new Promise((resolve, reject) => {
-    database.transaction((tx) => {
-      tx.executeSql(
-        'SELECT * FROM users WHERE username = ? AND password = ?',
-        [username, password],
-        (tx, results) => {
-          if (results.rows.length > 0) {
-            const user = results.rows.item(0);
-            resolve(user);
-          } else {
-            reject(new Error('Invalid username or password'));
-          }
-        },
-        (error) => reject(error)
-      );
-    });
-  });
+export const login = async (username, password) => {
+  console.log(username, password);
+
+  try {
+    const response = await axios.post(`${API_URL}/login`, { username, password });
+    return response.data.user; // Successfully return the user data
+  } catch (error) {
+    console.error('Error in login request:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Server error'); // Throw the error to the caller
+  }
 };

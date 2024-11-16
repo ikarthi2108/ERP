@@ -1,34 +1,41 @@
-// AddDealerScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
-import { addUserToDatabase, initializeDatabase } from '../database/database';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+// Replace this with your actual backend URL
+const API_URL = 'http://172.20.10.7:5000/api/users'; // Update with your backend URL
 
 const AddDealerScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState(''); // Added field for name
 
-  useEffect(() => {
-    // Initialize the database only once when the component mounts
-    initializeDatabase();
-  }, []);
-
-  const handleAddDealer = () => {
+  // Handle adding a new dealer
+  const handleAddDealer = async () => {
     // Validate inputs
-    if (!username || !password) {
-      Alert.alert('Error', 'Username and Password are required');
+    if (!username || !password || !name) {
+      Alert.alert('Error', 'Username, Password, and Name are required');
       return;
     }
 
-    // Add user to the database
-    addUserToDatabase(username, password, (error) => {
-      if (error) {
-        Alert.alert('Error', 'Failed to add dealer');
-      } else {
-        Alert.alert('Success', 'Dealer added successfully');
-        navigation.goBack(); // Go back to the previous screen
-      }
-    });
+    try {
+      // Send API request to add a dealer
+      const response = await axios.post(`${API_URL}/add-dealer`, {
+        username,
+        password,
+        name, // Send name to backend
+      });
+
+      Alert.alert('Success', response.data.message);
+      navigation.goBack(); // Go back to the previous screen
+    } catch (error) {
+      console.error('Error adding dealer:', error.response?.data || error.message);
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || 'Failed to add dealer. Please try again.'
+      );
+    }
   };
 
   return (
@@ -44,6 +51,15 @@ const AddDealerScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.formContainer}>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter Dealer's Name"
+          placeholderTextColor="#aaa"
+        />
+
         <Text style={styles.label}>Username</Text>
         <TextInput
           style={styles.input}
