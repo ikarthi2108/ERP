@@ -94,7 +94,7 @@ const UserScreen = ({ navigation }) => {
     if (empId) {
       const loadData = async () => {
         try {
-          const response = await axios.get(`http://172.20.10.7:5000/api/forms/${empId}`);
+          const response = await axios.get(`http://13.127.69.100:5000/api/forms/${empId}`);
           const { pending, approved, rejected } = response.data;
           setPendingData(pending);
           setApprovedData(approved);

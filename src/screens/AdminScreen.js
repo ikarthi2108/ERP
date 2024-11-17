@@ -18,7 +18,7 @@ import axios from 'axios';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Logout from '../utils/Logout';
 
-const API_URL = 'http://172.20.10.7:5000/api/forms'; // Use the provided API URL
+const API_URL = 'http://13.127.69.100:5000/api/forms'; // Use the provided API URL
 const Tab = createMaterialTopTabNavigator();
 
 const TabScreen = ({ data, showButtons }) => {

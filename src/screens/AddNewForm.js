@@ -14,18 +14,13 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Alert } from 'react-native'; 
 import {useNavigation} from '@react-navigation/native';
-import {
-  createTable,
-  insertData,
-  insertUserData,
-} from '../database/request_table';
 import styles from './AddNewFormStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://172.20.10.7:5000/api/forms'; 
+const API_URL = 'http://13.127.69.100:5000/api/forms'; 
 
 
 const AddNewForm = () => {
@@ -80,7 +75,6 @@ const AddNewForm = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    createTable();
     getUserData();
   }, []);
 
@@ -104,8 +98,8 @@ const AddNewForm = () => {
     ImagePicker.openPicker({
       multiple: true,
       mediaType: 'photo',
-      maxFiles: 3,
-      compressImageQuality: 0.8,
+      maxFiles: 1,
+      compressImageQuality: 0.4,
       includeBase64: true,
     })
       .then(images => {
@@ -384,7 +378,7 @@ const AddNewForm = () => {
                   onPress={handleImageSelection}
                   style={styles.imageButton}>
                   <Text style={styles.imageButtonText}>
-                    Select Images (up to 3)
+                    Select Image
                   </Text>
                 </TouchableOpacity>
 

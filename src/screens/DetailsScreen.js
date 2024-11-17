@@ -19,7 +19,7 @@ const DetailScreen = ({ route, navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [reason, setReason] = useState('');
 
-  const BASE_URL = 'http://172.20.10.7:5000/api/forms'; 
+  const BASE_URL = 'http://13.127.69.100:5000/api/forms'; 
 
   const updateFormStatus = async (id, isAccepted, isRejected, reason = null) => {
     try {

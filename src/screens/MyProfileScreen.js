@@ -7,7 +7,7 @@ import styles from './MyProfileStyles';
 
 // const API_URL = 'http://172.20.10.7:5000/api/users'; // Update this with your backend URL
 
-const API_URL = 'http://15.207.109.148:5000/api/users'
+const API_URL = 'http://13.127.69.100:5000/api/users'
 
 const MyProfileScreen = ({ navigation }) => {
   const [name, setName] = useState('');

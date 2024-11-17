@@ -4,7 +4,7 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // Replace this with your actual backend URL
-const API_URL = 'http://172.20.10.7:5000/api/users'; // Update with your backend URL
+const API_URL = 'http://13.127.69.100:5000/api/users'; 
 
 const AddDealerScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
