@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Alert } from 'react-native'; 
 import {useNavigation} from '@react-navigation/native';
 import {
   createTable,
@@ -21,7 +22,11 @@ import {
 import styles from './AddNewFormStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'http://172.20.10.7:5000/api/forms'; 
+
 
 const AddNewForm = () => {
   const [isDetailedForm, setIsDetailedForm] = useState(false);
@@ -115,9 +120,20 @@ const AddNewForm = () => {
       .catch(error => console.error('Error selecting images:', error));
   };
 
+
+  const submitFormDataToAPI = async (formData) => {
+    try {
+      const response = await axios.post(API_URL, formData);
+      console.log(response.data.message);
+      return response.data;
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      throw error;
+    }
+  };
   const handleSubmit = () => {
-    console.log('User details on submit: ', { empId, userName, userRole }); // Debugging
-  navigation.navigate('UserScreen')
+    console.log('User details on submit: ', { empId, userName, userRole });
+  
     const requestId = Math.floor(10000 + Math.random() * 90000); // Generate random 5-digit number
     const formData = {
       requestId,
@@ -147,10 +163,25 @@ const AddNewForm = () => {
       reason: '', // If you don't have a reason, leave it as an empty string
     };
   
-    // Insert form data into the database
-    insertData(formData)
+    submitFormDataToAPI(formData)
       .then(() => {
-        console.log('Form data inserted successfully');
+        console.log('Form data submitted successfully');
+  
+        // Display an alert and navigate on confirmation
+        Alert.alert(
+          'Success',
+          'Your form has been submitted successfully!',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Navigate to UserScreen
+                navigation.navigate('UserScreen');
+              },
+            },
+          ],
+          { cancelable: false } // Prevent closing alert without action
+        );
   
         // Reset all form fields after submitting
         setEnterpriseName('');
@@ -170,8 +201,9 @@ const AddNewForm = () => {
         setSelectedImages([]);
         setIsDetailedForm(false); // Reset to initial view
       })
-      .catch(error => console.error('Error inserting form data:', error));
+      .catch(error => console.error('Error submitting form data:', error));
   };
+  
   
 
   return (

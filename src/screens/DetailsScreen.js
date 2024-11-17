@@ -10,14 +10,32 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
-import { updateItemStatus } from '../database/adminDbServices';
 import styles from './DetailsScreenStyles';
+import axios from 'axios';
 
 const DetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [reason, setReason] = useState('');
+
+  const BASE_URL = 'http://172.20.10.7:5000/api/forms'; 
+
+  const updateFormStatus = async (id, isAccepted, isRejected, reason = null) => {
+    try {
+      setLoading(true);
+      const response = await axios.put(`${BASE_URL}/${id}/update-status`, {
+        isAccepted,
+        isRejected,
+        reason,
+      });
+      setLoading(false);
+      return response.data;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
+  };
 
   const handleAccept = () => {
     Alert.alert(
@@ -32,15 +50,12 @@ const DetailScreen = ({ route, navigation }) => {
         {
           text: 'Accept',
           onPress: () => {
-            setLoading(true);
-            updateItemStatus(item.id, 1, 0)  // Accept the item
+            updateFormStatus(item._id, true, false)
               .then(() => {
-                setLoading(false);
                 Alert.alert('Success', 'Item accepted');
-                navigation.navigate('AdminScreen');
+                navigation.navigate('AdminScreen'); // Navigate back to admin screen
               })
               .catch(() => {
-                setLoading(false);
                 Alert.alert('Error', 'Failed to accept the item');
               });
           },
@@ -51,8 +66,7 @@ const DetailScreen = ({ route, navigation }) => {
   };
 
   const handleReject = () => {
-    // Show the modal to capture the rejection reason
-    setModalVisible(true);
+    setModalVisible(true); // Show modal to capture rejection reason
   };
 
   const submitRejection = () => {
@@ -61,16 +75,13 @@ const DetailScreen = ({ route, navigation }) => {
       return;
     }
 
-    setLoading(true);
-    updateItemStatus(item.id, 0, 1, reason)  // Reject the item with the reason
+    updateFormStatus(item._id, false, true, reason)
       .then(() => {
-        setLoading(false);
         setModalVisible(false);
         Alert.alert('Success', 'Item rejected');
-        navigation.goBack();
+        navigation.navigate('AdminScreen'); // Navigate back to admin screen
       })
       .catch(() => {
-        setLoading(false);
         Alert.alert('Error', 'Failed to reject the item');
       });
   };
@@ -87,40 +98,28 @@ const DetailScreen = ({ route, navigation }) => {
         <Text style={styles.value}>{item.ownerName}</Text>
         <Text style={styles.label}>Address:</Text>
         <Text style={styles.value}>{item.address}</Text>
-
         <Text style={styles.label}>City:</Text>
         <Text style={styles.value}>{item.city}</Text>
-
         <Text style={styles.label}>Pincode:</Text>
         <Text style={styles.value}>{item.pincode}</Text>
-
         <Text style={styles.label}>Mobile No:</Text>
         <Text style={styles.value}>{item.mobileNo}</Text>
-
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.value}>{item.email}</Text>
-
         <Text style={styles.label}>GST No:</Text>
         <Text style={styles.value}>{item.gstNo}</Text>
-
         <Text style={styles.label}>DTP No:</Text>
         <Text style={styles.value}>{item.dtpNo}</Text>
-
         <Text style={styles.label}>Other Reg No:</Text>
         <Text style={styles.value}>{item.regNo}</Text>
-
         <Text style={styles.label}>Category:</Text>
         <Text style={styles.value}>{item.category}</Text>
-
         <Text style={styles.label}>SubCategory:</Text>
         <Text style={styles.value}>{item.subCategory}</Text>
-
         <Text style={styles.label}>Dealer Name:</Text>
         <Text style={styles.value}>{item.dealer}</Text>
-
         <Text style={styles.label}>Additional Items:</Text>
         <Text style={styles.value}>{item.additionalItems}</Text>
-
         <Text style={styles.label}>Created Date & Time:</Text>
         <Text style={styles.value}>
           {item.createdDate} {item.createdTime}

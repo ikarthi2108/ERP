@@ -5,7 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './MyProfileStyles';
 
-const API_URL = 'http://172.20.10.7:5000/api/users'; // Update this with your backend URL
+// const API_URL = 'http://172.20.10.7:5000/api/users'; // Update this with your backend URL
+
+const API_URL = 'http://15.207.109.148:5000/api/users'
 
 const MyProfileScreen = ({ navigation }) => {
   const [name, setName] = useState('');

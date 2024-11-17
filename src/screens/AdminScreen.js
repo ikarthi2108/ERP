@@ -1,32 +1,31 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Image,
   TouchableOpacity,
-  StyleSheet,
   Animated,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  Modal, // Import Modal
+  Modal,
 } from 'react-native';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AdminScreenStyles from './AdminScreenStyles';
 import Profile from '../assets/profile.png';
-import {fetchData} from '../database/adminDbServices';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Logout from '../utils/Logout';
-import {createTable} from '../database/request_table';
 
+const API_URL = 'http://172.20.10.7:5000/api/forms'; // Use the provided API URL
 const Tab = createMaterialTopTabNavigator();
 
-const TabScreen = ({data, showButtons}) => {
+const TabScreen = ({ data, showButtons }) => {
   const navigation = useNavigation();
 
   const handleItemClick = item => {
-    navigation.navigate('Detail', {item});
+    navigation.navigate('Detail', { item });
   };
 
   return (
@@ -39,7 +38,7 @@ const TabScreen = ({data, showButtons}) => {
             <Text style={AdminScreenStyles.dateHeader}>{date}</Text>
             {items.map(item => (
               <TouchableOpacity
-                key={item.id}
+                key={item._id}
                 style={AdminScreenStyles.card}
                 onPress={() => handleItemClick(item)}>
                 <Image source={Profile} style={AdminScreenStyles.image} />
@@ -60,10 +59,6 @@ const TabScreen = ({data, showButtons}) => {
                   <Text style={AdminScreenStyles.details}>
                     {item.ownerName}
                   </Text>
-                  <Text style={AdminScreenStyles.label}>Serial No:</Text>
-                  <Text style={AdminScreenStyles.details}>
-                    {item.requestId}
-                  </Text>
                   <Text style={AdminScreenStyles.label}>City:</Text>
                   <Text style={AdminScreenStyles.details}>{item.city}</Text>
                   <Text style={AdminScreenStyles.label}>
@@ -72,16 +67,6 @@ const TabScreen = ({data, showButtons}) => {
                   <Text style={AdminScreenStyles.details}>
                     {item.createdDate} {item.createdTime}
                   </Text>
-                  {item.actionDate && item.actionTime && (
-                    <>
-                      <Text style={AdminScreenStyles.label}>
-                        Action Date & Time:
-                      </Text>
-                      <Text style={AdminScreenStyles.details}>
-                        {item.actionDate} {item.actionTime}
-                      </Text>
-                    </>
-                  )}
                   {item.reason && (
                     <View style={AdminScreenStyles.reasonContainer}>
                       <Text style={AdminScreenStyles.reasonText}>
@@ -122,7 +107,7 @@ const TabScreen = ({data, showButtons}) => {
   );
 };
 
-const AdminScreen = ({navigation}) => {
+const AdminScreen = ({ navigation }) => {
   const [data, setData] = useState({
     pendingData: {},
     approvedData: {},
@@ -130,7 +115,7 @@ const AdminScreen = ({navigation}) => {
   });
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarAnim = useState(new Animated.Value(-250))[0];
-  const {loading, showLogoutConfirmation} = Logout();
+  const { loading, showLogoutConfirmation } = Logout();
 
   const toggleSidebar = () => {
     Animated.timing(sidebarAnim, {
@@ -145,21 +130,51 @@ const AdminScreen = ({navigation}) => {
     if (sidebarVisible) toggleSidebar();
   };
 
+  const fetchRequestsFromAPI = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      if (response.status === 200) {
+        const groupedData = groupDataByStatus(response.data);
+        setData(groupedData);
+      }
+    } catch (error) {
+      console.error('Error fetching requests from API:', error);
+    }
+  };
+
+  const groupDataByStatus = requests => {
+    const grouped = {
+      pendingData: {},
+      approvedData: {},
+      rejectedData: {},
+    };
+    requests.forEach(request => {
+      const date = new Date(request.createdDate).toLocaleDateString();
+      const statusKey = request.isPending
+        ? 'pendingData'
+        : request.isAccepted
+        ? 'approvedData'
+        : 'rejectedData';
+
+      if (!grouped[statusKey][date]) {
+        grouped[statusKey][date] = [];
+      }
+      grouped[statusKey][date].push(request);
+    });
+    return grouped;
+  };
+
   const getRequestCount = data => {
     return Object.values(data).reduce(
       (total, items) => total + items.length,
-      0,
+      0
     );
   };
-  useEffect(() => {
-    createTable();
-  }, []);
+
   useFocusEffect(
     useCallback(() => {
-      fetchData()
-        .then(fetchedData => setData(fetchedData))
-        .catch(error => console.log('Error fetching data:', error));
-    }, []),
+      fetchRequestsFromAPI();
+    }, [])
   );
 
   const pendingCount = getRequestCount(data.pendingData);
@@ -169,7 +184,6 @@ const AdminScreen = ({navigation}) => {
   return (
     <TouchableWithoutFeedback onPress={handleOverlayPress}>
       <View style={AdminScreenStyles.container}>
-        {/* Loader Modal centered on the screen */}
         <Modal visible={loading} transparent={true} animationType="fade">
           <View style={AdminScreenStyles.modalContainer}>
             <View style={AdminScreenStyles.loaderContainer}>
@@ -180,23 +194,20 @@ const AdminScreen = ({navigation}) => {
         </Modal>
 
         {sidebarVisible && <View style={AdminScreenStyles.overlay} />}
-        <Animated.View style={[AdminScreenStyles.sidebar, {left: sidebarAnim}]}>
+        <Animated.View style={[AdminScreenStyles.sidebar, { left: sidebarAnim }]}>
           <Text style={AdminScreenStyles.sidebarTitle}>ADMIN</Text>
           <TouchableOpacity
             style={AdminScreenStyles.sidebarButton}
-            onPress={() => navigation.navigate('AddDealerScreen')} // Navigate to the add dealer screen
-          >
-            <Text style={AdminScreenStyles.sidebarButtonText}>
-              Add New Dealer
-            </Text>
+            onPress={() => navigation.navigate('AddDealerScreen')}>
+            <Text style={AdminScreenStyles.sidebarButtonText}>Add New Dealer</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={AdminScreenStyles.sidebarButton}
             onPress={showLogoutConfirmation}>
             <Text style={AdminScreenStyles.sidebarButtonText}>Logout</Text>
           </TouchableOpacity>
         </Animated.View>
+
         <View style={AdminScreenStyles.header}>
           <TouchableOpacity
             onPress={toggleSidebar}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,11 @@ import {
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Logout from '../utils/Logout';
-import styles from './UserScreenStyles';
 import Profile from '../assets/profile.png';
-import { fetchDataByEmpId } from '../database/dealerDbServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createTable } from '../database/request_table';
+import axios from 'axios';
+import styles from './UserScreenStyles';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -41,9 +41,7 @@ const Card = ({ item, status }) => (
     </View>
     <View style={styles.statusContainer}>
       <Text style={styles.statusText}>{status}</Text>
-     
     </View>
-   
   </View>
 );
 
@@ -52,8 +50,8 @@ const DataListScreen = ({ data, status }) => (
     {Object.keys(data).map(date => (
       <View key={date}>
         <Text style={styles.sectionTitle}>{date}</Text>
-        {data[date].map(item => (
-          <Card key={item.id} item={item} status={status} />
+        {data[date].map((item, index) => (
+          <Card key={`${date}-${index}`} item={item} status={status} />
         ))}
       </View>
     ))}
@@ -62,8 +60,8 @@ const DataListScreen = ({ data, status }) => (
 
 const UserScreen = ({ navigation }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [drawerAnimation] = useState(new Animated.Value(-250)); // Starting position off-screen
-  const { loading, showLogoutConfirmation } = Logout(); // Using the Logout function
+  const [drawerAnimation] = useState(new Animated.Value(-250));
+  const { loading, showLogoutConfirmation } = Logout();
   const [pendingData, setPendingData] = useState({});
   const [approvedData, setApprovedData] = useState({});
   const [rejectedData, setRejectedData] = useState({});
@@ -74,7 +72,6 @@ const UserScreen = ({ navigation }) => {
   const [name, setName] = useState(null);
 
   useEffect(() => {
-    createTable()
     const getUserData = async () => {
       try {
         const userData = await AsyncStorage.getItem('userData');
@@ -91,92 +88,52 @@ const UserScreen = ({ navigation }) => {
     getUserData();
   }, []);
 
+ 
+
   useEffect(() => {
     if (empId) {
       const loadData = async () => {
         try {
-          const { pendingData, approvedData, rejectedData } =
-            await fetchDataByEmpId(empId);
-          setPendingData(pendingData);
-          setApprovedData(approvedData);
-          setRejectedData(rejectedData);
+          const response = await axios.get(`http://172.20.10.7:5000/api/forms/${empId}`);
+          const { pending, approved, rejected } = response.data;
+          setPendingData(pending);
+          setApprovedData(approved);
+          setRejectedData(rejected);
 
-          // Calculate counts for each status
-          const pendingCount = Object.values(pendingData).reduce(
+          const pendingCount = Object.values(pending).reduce(
             (acc, arr) => acc + arr.length,
             0
           );
-          const approvedCount = Object.values(approvedData).reduce(
+          const approvedCount = Object.values(approved).reduce(
             (acc, arr) => acc + arr.length,
             0
           );
-          const rejectedCount = Object.values(rejectedData).reduce(
+          const rejectedCount = Object.values(rejected).reduce(
             (acc, arr) => acc + arr.length,
             0
           );
 
-          // Update counts in the state
           setPendingCount(pendingCount);
           setApprovedCount(approvedCount);
           setRejectedCount(rejectedCount);
 
-          // Log the counts to the console
-          console.log(
-            `Pending count: ${pendingCount}, Approved count: ${approvedCount}, Rejected count: ${rejectedCount}`
-          );
         } catch (error) {
           console.error('Error fetching data by emp_id:', error);
         }
       };
+
       loadData();
     }
   }, [empId]);
 
-  // Function to handle the re-fetching of data after adding new data
-  const handleAddNewData = async () => {
-    try {
-      // After adding new data, re-fetch the data by employee ID
-      const { pendingData, approvedData, rejectedData } = await fetchDataByEmpId(
-        empId
-      );
-
-      setPendingData(pendingData);
-      setApprovedData(approvedData);
-      setRejectedData(rejectedData);
-
-      // Recalculate counts for each status
-      const pendingCount = Object.values(pendingData).reduce(
-        (acc, arr) => acc + arr.length,
-        0
-      );
-      const approvedCount = Object.values(approvedData).reduce(
-        (acc, arr) => acc + arr.length,
-        0
-      );
-      const rejectedCount = Object.values(rejectedData).reduce(
-        (acc, arr) => acc + arr.length,
-        0
-      );
-
-      // Update counts
-      setPendingCount(pendingCount);
-      setApprovedCount(approvedCount);
-      setRejectedCount(rejectedCount);
-    } catch (error) {
-      console.error('Error refetching data after adding new entry', error);
-    }
-  };
-
-  const toggleDrawer = item => {
+  const toggleDrawer = () => {
     if (isDrawerOpen) {
-      // Close drawer
       Animated.timing(drawerAnimation, {
         toValue: -250,
         duration: 300,
         useNativeDriver: true,
       }).start(() => setIsDrawerOpen(false));
     } else {
-      // Open drawer
       setIsDrawerOpen(true);
       Animated.timing(drawerAnimation, {
         toValue: 0,
@@ -208,31 +165,27 @@ const UserScreen = ({ navigation }) => {
         <Tab.Screen
           name="UserPendingScreen"
           children={() => <DataListScreen data={pendingData} status="Pending" />}
-          options={{ title: `Pending (${pendingCount})` }} // Show count in tab label
+          options={{ title: `Pending (${pendingCount})` }}
         />
         <Tab.Screen
           name="UserApprovalScreen"
           children={() => <DataListScreen data={approvedData} status="Approved" />}
-          options={{ title: `Approval (${approvedCount})` }} // Show count in tab label
+          options={{ title: `Approval (${approvedCount})` }}
         />
         <Tab.Screen
           name="UserRejectedScreen"
           children={() => <DataListScreen data={rejectedData} status="Rejected" />}
-          options={{ title: `Rejected (${rejectedCount})` }} // Show count in tab label
+          options={{ title: `Rejected (${rejectedCount})` }}
         />
       </Tab.Navigator>
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => {
-          navigation.navigate('AddNewForm');
-          handleAddNewData(); // Call the re-fetch function when returning
-        }}
+        onPress={() => navigation.navigate('AddNewForm')}
       >
         <Text style={styles.addButtonText}>ADD NEW DATA</Text>
       </TouchableOpacity>
 
-      {/* Custom Sidebar Drawer */}
       {isDrawerOpen && (
         <TouchableOpacity style={styles.drawerOverlay} onPress={toggleDrawer} />
       )}
@@ -264,7 +217,6 @@ const UserScreen = ({ navigation }) => {
         </TouchableOpacity>
       </Animated.View>
 
-      {/* Loader Modal centered on the screen */}
       <Modal visible={loading} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.loaderContainer}>
@@ -276,14 +228,5 @@ const UserScreen = ({ navigation }) => {
     </View>
   );
 };
-
-const customStyles = StyleSheet.create({
-  rejectionReason: {
-    fontSize: 14,
-    color: 'red',
-    fontStyle: 'italic',
-    marginTop: 5,
-  },
-});
 
 export default UserScreen;
