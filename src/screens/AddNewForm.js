@@ -20,7 +20,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://13.127.69.100:5000/api/forms'; 
+const API_URL = 'http://ec2-3.110.107.139.ap-south-1.compute.amazonaws.com:5000/api/forms'; 
 
 
 const AddNewForm = () => {

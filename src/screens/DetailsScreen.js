@@ -19,7 +19,7 @@ const DetailScreen = ({ route, navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [reason, setReason] = useState('');
 
-  const BASE_URL = 'http://13.127.69.100:5000/api/forms'; 
+  const BASE_URL = 'http://ec2-3.110.107.139.ap-south-1.compute.amazonaws.com:5000/api/forms'; 
 
   const updateFormStatus = async (id, isAccepted, isRejected, reason = null) => {
     try {
