@@ -3,7 +3,7 @@ import axios from 'axios';
 // const API_URL = 'http://13.127.69.100:5000/api/users'; 
 // const API_URL = 'https://13.127.69.100:5000/api/users'; 
 
-const API_URL = 'http://ec2-3-110-107-139.ap-south-1.compute.amazonaws.com:5000/api/users'; 
+const API_URL = 'https://krishna-a4lf.onrender.com/api/users'; 
 
 
 
