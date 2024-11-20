@@ -16,9 +16,10 @@ import AdminScreenStyles from './AdminScreenStyles';
 import Profile from '../assets/profile.png';
 import axios from 'axios';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Loader from '../components/Loader';
 import Logout from '../utils/Logout';
 
-const API_URL = 'https://krishna-a4lf.onrender.com/api/forms'; // Use the provided API URL
+const API_URL = 'https://krishna-a4lf.onrender.com/api/forms';
 const Tab = createMaterialTopTabNavigator();
 
 const TabScreen = ({ data, showButtons }) => {
@@ -47,6 +48,8 @@ const TabScreen = ({ data, showButtons }) => {
                   <Text style={AdminScreenStyles.details}>{item.name}</Text>
                   <Text style={AdminScreenStyles.label}>Employee ID:</Text>
                   <Text style={AdminScreenStyles.details}>{item.emp_id}</Text>
+                  <Text style={AdminScreenStyles.label}>City:</Text>
+                  <Text style={AdminScreenStyles.CityName}>{item.city}</Text>
                   <Text style={AdminScreenStyles.label}>Request ID:</Text>
                   <Text style={AdminScreenStyles.requestId}>
                     {item.requestId}
@@ -113,9 +116,10 @@ const AdminScreen = ({ navigation }) => {
     approvedData: {},
     rejectedData: {},
   });
+  const [loading, setLoading] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarAnim = useState(new Animated.Value(-250))[0];
-  const { loading, showLogoutConfirmation } = Logout();
+  const { showLogoutConfirmation } = Logout();
 
   const toggleSidebar = () => {
     Animated.timing(sidebarAnim, {
@@ -131,6 +135,7 @@ const AdminScreen = ({ navigation }) => {
   };
 
   const fetchRequestsFromAPI = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(API_URL);
       if (response.status === 200) {
@@ -139,6 +144,8 @@ const AdminScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching requests from API:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -184,14 +191,7 @@ const AdminScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={handleOverlayPress}>
       <View style={AdminScreenStyles.container}>
-        <Modal visible={loading} transparent={true} animationType="fade">
-          <View style={AdminScreenStyles.modalContainer}>
-            <View style={AdminScreenStyles.loaderContainer}>
-              <ActivityIndicator size="large" color="#FF6A6A" />
-              <Text style={AdminScreenStyles.modalText}>Logging out...</Text>
-            </View>
-          </View>
-        </Modal>
+        {loading && <Loader />}
 
         {sidebarVisible && <View style={AdminScreenStyles.overlay} />}
         <Animated.View style={[AdminScreenStyles.sidebar, { left: sidebarAnim }]}>
@@ -220,9 +220,14 @@ const AdminScreen = ({ navigation }) => {
               Deal With Your Dealer And Customer
             </Text>
           </View>
+          <TouchableOpacity
+            onPress={fetchRequestsFromAPI}
+            style={AdminScreenStyles.refreshIconContainer}>
+            <Icon name="refresh" size={24} color="#000" />
+          </TouchableOpacity>
         </View>
 
-        <Tab.Navigator>
+        <Tab.Navigator tabBarOptions={{ scrollEnabled: true }}>
           <Tab.Screen
             name={`Pending (${pendingCount})`}
             children={() => (

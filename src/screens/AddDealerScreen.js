@@ -1,30 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Loader from '../components/Loader'; 
 
 // Replace this with your actual backend URL
-const API_URL = 'https://krishna-a4lf.onrender.com/api/users'; 
+const API_URL = 'https://krishna-a4lf.onrender.com/api/users';
 
 const AddDealerScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState(''); // Added field for name
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Handle adding a new dealer
   const handleAddDealer = async () => {
-    // Validate inputs
     if (!username || !password || !name) {
-      Alert.alert('Error', 'Username, Password, and Name are required');
+      Alert.alert('Error', 'All fields are required');
       return;
     }
 
+    setLoading(true); // Show loader
     try {
-      // Send API request to add a dealer
       const response = await axios.post(`${API_URL}/add-dealer`, {
         username,
         password,
-        name, // Send name to backend
+        name,
       });
 
       Alert.alert('Success', response.data.message);
@@ -35,11 +43,14 @@ const AddDealerScreen = ({ navigation }) => {
         'Error',
         error.response?.data?.message || 'Failed to add dealer. Please try again.'
       );
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
   return (
     <View style={styles.container}>
+      {loading && <Loader message="Adding Dealer..." />}
       <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -51,7 +62,7 @@ const AddDealerScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.formContainer}>
-        <Text style={styles.label}>Name</Text>
+        <Text style={styles.label}>Dealer Name</Text>
         <TextInput
           style={styles.input}
           value={name}
@@ -90,14 +101,15 @@ const AddDealerScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f4f8',
+    backgroundColor: '#f7f8fc',
   },
   headerContainer: {
-    backgroundColor: '#f77f7f',
+    backgroundColor: '#ff7f7f',
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    elevation: 4,
   },
   backButtonContainer: {
     marginRight: 12,
@@ -113,32 +125,41 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#333',
+    color: '#444',
     marginBottom: 8,
     fontWeight: '500',
   },
   input: {
-    height: 45,
+    height: 48,
     borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     fontSize: 16,
     color: '#333',
     backgroundColor: '#fff',
-    marginBottom: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
   addButton: {
-    backgroundColor: '#f77f7f',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: '#ff7f7f',
+    borderRadius: 10,
+    paddingVertical: 15,
     alignItems: 'center',
     marginTop: 10,
+    shadowColor: '#ff7f7f',
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 3,
   },
   addButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    letterSpacing: 0.8,
   },
 });
 

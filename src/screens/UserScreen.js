@@ -17,7 +17,6 @@ import Profile from '../assets/profile.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import styles from './UserScreenStyles';
-import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,18 +44,37 @@ const Card = ({ item, status }) => (
   </View>
 );
 
-const DataListScreen = ({ data, status }) => (
-  <ScrollView style={styles.scrollContainer}>
-    {Object.keys(data).map(date => (
-      <View key={date}>
-        <Text style={styles.sectionTitle}>{date}</Text>
-        {data[date].map((item, index) => (
-          <Card key={`${date}-${index}`} item={item} status={status} />
-        ))}
+const DataListScreen = ({ data, status, isLoading }) => {
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#FF6A6A" />
+        <Text style={styles.loaderText}>Loading Data...</Text>
       </View>
-    ))}
-  </ScrollView>
-);
+    );
+  }
+
+  if (Object.keys(data).length === 0) {
+    return (
+      <View style={styles.noDataContainer}>
+        <Text style={styles.noDataText}>No Data Found</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView style={styles.scrollContainer}>
+      {Object.keys(data).map(date => (
+        <View key={date}>
+          <Text style={styles.sectionTitle}>{date}</Text>
+          {data[date].map((item, index) => (
+            <Card key={`${date}-${index}`} item={item} status={status} />
+          ))}
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
 
 const UserScreen = ({ navigation }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -70,6 +88,7 @@ const UserScreen = ({ navigation }) => {
   const [rejectedCount, setRejectedCount] = useState(0);
   const [empId, setEmpId] = useState(null);
   const [name, setName] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -88,43 +107,47 @@ const UserScreen = ({ navigation }) => {
     getUserData();
   }, []);
 
- 
+  const fetchData = async () => {
+    if (!empId) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`https://krishna-a4lf.onrender.com/api/forms/${empId}`);
+      const { pending, approved, rejected } = response.data;
+      setPendingData(pending);
+      setApprovedData(approved);
+      setRejectedData(rejected);
+
+      const pendingCount = Object.values(pending).reduce(
+        (acc, arr) => acc + arr.length,
+        0
+      );
+      const approvedCount = Object.values(approved).reduce(
+        (acc, arr) => acc + arr.length,
+        0
+      );
+      const rejectedCount = Object.values(rejected).reduce(
+        (acc, arr) => acc + arr.length,
+        0
+      );
+
+      setPendingCount(pendingCount);
+      setApprovedCount(approvedCount);
+      setRejectedCount(rejectedCount);
+    } catch (error) {
+      console.error('Error fetching data by emp_id:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (empId) {
-      const loadData = async () => {
-        try {
-          const response = await axios.get(`http://ec2-3.110.107.139.ap-south-1.compute.amazonaws.com:5000/api/forms/${empId}`);
-          const { pending, approved, rejected } = response.data;
-          setPendingData(pending);
-          setApprovedData(approved);
-          setRejectedData(rejected);
-
-          const pendingCount = Object.values(pending).reduce(
-            (acc, arr) => acc + arr.length,
-            0
-          );
-          const approvedCount = Object.values(approved).reduce(
-            (acc, arr) => acc + arr.length,
-            0
-          );
-          const rejectedCount = Object.values(rejected).reduce(
-            (acc, arr) => acc + arr.length,
-            0
-          );
-
-          setPendingCount(pendingCount);
-          setApprovedCount(approvedCount);
-          setRejectedCount(rejectedCount);
-
-        } catch (error) {
-          console.error('Error fetching data by emp_id:', error);
-        }
-      };
-
-      loadData();
-    }
+    fetchData();
   }, [empId]);
+
+  const handleRefresh = () => {
+    fetchData();
+  };
 
   const toggleDrawer = () => {
     if (isDrawerOpen) {
@@ -150,9 +173,9 @@ const UserScreen = ({ navigation }) => {
           <Icon name="menu" size={28} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerText}>CONNECTING</Text>
-        <Text style={styles.subHeaderText}>
-          Deal With Your Dealer And Customer
-        </Text>
+        <TouchableOpacity onPress={handleRefresh}>
+          <Icon name="refresh" size={28} color="black" />
+        </TouchableOpacity>
       </View>
 
       <Tab.Navigator
@@ -164,17 +187,17 @@ const UserScreen = ({ navigation }) => {
       >
         <Tab.Screen
           name="UserPendingScreen"
-          children={() => <DataListScreen data={pendingData} status="Pending" />}
+          children={() => <DataListScreen data={pendingData} status="Pending" isLoading={isLoading} />}
           options={{ title: `Pending (${pendingCount})` }}
         />
         <Tab.Screen
           name="UserApprovalScreen"
-          children={() => <DataListScreen data={approvedData} status="Approved" />}
-          options={{ title: `Approval (${approvedCount})` }}
+          children={() => <DataListScreen data={approvedData} status="Approved" isLoading={isLoading} />}
+          options={{ title: `Approved (${approvedCount})` }}
         />
         <Tab.Screen
           name="UserRejectedScreen"
-          children={() => <DataListScreen data={rejectedData} status="Rejected" />}
+          children={() => <DataListScreen data={rejectedData} status="Rejected" isLoading={isLoading} />}
           options={{ title: `Rejected (${rejectedCount})` }}
         />
       </Tab.Navigator>
@@ -190,10 +213,7 @@ const UserScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.drawerOverlay} onPress={toggleDrawer} />
       )}
       <Animated.View
-        style={[
-          styles.drawerContainer,
-          { transform: [{ translateX: drawerAnimation }] },
-        ]}
+        style={[styles.drawerContainer, { transform: [{ translateX: drawerAnimation }] }]}
       >
         <View style={styles.profileContainer}>
           <Image source={Profile} style={styles.drawerProfileImage} />

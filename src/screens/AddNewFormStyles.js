@@ -139,6 +139,22 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 8,
   },
+  removeButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#fefcfc',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    color: '#111',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

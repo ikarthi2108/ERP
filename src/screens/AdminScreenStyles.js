@@ -42,7 +42,7 @@ const AdminScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#dac5c5',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -52,6 +52,7 @@ const AdminScreenStyles = StyleSheet.create({
   headerTextContainer: {
     flex: 1,
     alignItems: 'center',
+    
   },
   title: {
     fontSize: 20,
@@ -108,6 +109,11 @@ const AdminScreenStyles = StyleSheet.create({
   requestId: {
     fontSize: 16,
     color: '#f57c00',
+    fontWeight: 'bold',
+  },
+  CityName:{
+    fontSize: 16,
+    color: '#3d00f5',
     fontWeight: 'bold',
   },
   companyName: {

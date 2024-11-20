@@ -1,16 +1,14 @@
-// MyProfileStyles.js
-
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ff7f7f',
+    backgroundColor: '#f3f3f3', // Lighter background for contrast
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#fff', // Changed background color for profile form
   },
   headerContainer: {
     flexDirection: 'row',
@@ -25,9 +23,11 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#111',
+    flex: 1,
+    textAlign: 'center',
   },
   label: {
     fontSize: 16,
@@ -39,34 +39,46 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
     fontSize: 16,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3, // Slight shadow effect
   },
   inputDisabled: {
     backgroundColor: '#e9ecef',
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
     fontSize: 16,
     color: '#6c757d',
     marginBottom: 15,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2, // Subtle shadow for disabled input
   },
   textArea: {
     height: 100,
     textAlignVertical: 'top',
+    borderRadius: 10, // Rounded corners for textarea
   },
   updateButton: {
     backgroundColor: '#ff7f7f',
     paddingVertical: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3, // Button shadow for depth
   },
   updateButtonText: {
-    color: '#fff',
+    color: '#111',
     fontSize: 18,
     fontWeight: '600',
   },

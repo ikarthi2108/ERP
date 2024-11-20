@@ -12,18 +12,19 @@ import {
   Image,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Alert } from 'react-native'; 
+import {Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from './AddNewFormStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../components/Loader';
 
-const API_URL = 'https://krishna-a4lf.onrender.com/api/forms'; 
-
+const API_URL = 'https://krishna-a4lf.onrender.com/api/forms';
 
 const AddNewForm = () => {
+  const [loading, setLoading] = useState(false);
   const [isDetailedForm, setIsDetailedForm] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categoryValue, setCategoryValue] = useState(null);
@@ -98,7 +99,7 @@ const AddNewForm = () => {
     ImagePicker.openPicker({
       multiple: true,
       mediaType: 'photo',
-      maxFiles: 1,
+      maxFiles: 3, // Allow up to 3 images
       compressImageQuality: 0.4,
       includeBase64: true,
     })
@@ -109,25 +110,30 @@ const AddNewForm = () => {
         }
 
         const base64Images = images.map(image => image.data);
-        setSelectedImages(base64Images);
+        setSelectedImages(prevImages => [...prevImages, ...base64Images]); // Append new images
       })
       .catch(error => console.error('Error selecting images:', error));
   };
 
+  const handleRemoveImage = () => {
+    setSelectedImages([]);
+  };
 
-  const submitFormDataToAPI = async (formData) => {
+  const submitFormDataToAPI = async formData => {
     try {
       const response = await axios.post(API_URL, formData);
+      setLoading(false); // Hide loader
       console.log(response.data.message);
       return response.data;
     } catch (error) {
+      setLoading(false); // Hide loader
       console.error('Error submitting form data:', error);
       throw error;
     }
   };
   const handleSubmit = () => {
-    console.log('User details on submit: ', { empId, userName, userRole });
-  
+    console.log('User details on submit: ', {empId, userName, userRole});
+
     const requestId = Math.floor(10000 + Math.random() * 90000); // Generate random 5-digit number
     const formData = {
       requestId,
@@ -156,11 +162,12 @@ const AddNewForm = () => {
       role: userRole,
       reason: '', // If you don't have a reason, leave it as an empty string
     };
-  
+    setLoading(true);
+
     submitFormDataToAPI(formData)
       .then(() => {
         console.log('Form data submitted successfully');
-  
+
         // Display an alert and navigate on confirmation
         Alert.alert(
           'Success',
@@ -174,9 +181,9 @@ const AddNewForm = () => {
               },
             },
           ],
-          { cancelable: false } // Prevent closing alert without action
+          {cancelable: false}, // Prevent closing alert without action
         );
-  
+
         // Reset all form fields after submitting
         setEnterpriseName('');
         setOwnerName('');
@@ -197,8 +204,6 @@ const AddNewForm = () => {
       })
       .catch(error => console.error('Error submitting form data:', error));
   };
-  
-  
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -206,7 +211,7 @@ const AddNewForm = () => {
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButtonContainer}>
-          <Icon name="chevron-back" size={30} color="#fff" />
+          <Icon name="chevron-back" size={30} color="#111" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Add New Details</Text>
       </View>
@@ -377,19 +382,23 @@ const AddNewForm = () => {
                 <TouchableOpacity
                   onPress={handleImageSelection}
                   style={styles.imageButton}>
-                  <Text style={styles.imageButtonText}>
-                    Select Image
-                  </Text>
+                  <Text style={styles.imageButtonText}>Select Image</Text>
                 </TouchableOpacity>
 
                 <View style={styles.selectedImagesContainer}>
                   {selectedImages.map((image, idx) => (
-                    <Image
-                      key={idx}
-                      source={{uri: `data:image/png;base64,${image}`}}
-                      style={styles.selectedImage}
-                      resizeMode="cover" // Optional: To control image resizing
-                    />
+                    <View key={idx} style={styles.imageWrapper}>
+                      <Image
+                        source={{uri: `data:image/png;base64,${image}`}}
+                        style={styles.selectedImage}
+                        resizeMode="cover" // Optional: To control image resizing
+                      />
+                      <TouchableOpacity
+                        onPress={() => handleRemoveImage(idx)}
+                        style={styles.removeButton}>
+                        <Text style={styles.removeButtonText}>X</Text>
+                      </TouchableOpacity>
+                    </View>
                   ))}
                 </View>
 
@@ -410,6 +419,7 @@ const AddNewForm = () => {
           }
         />
       </KeyboardAvoidingView>
+      {loading && <Loader message="Submitting your form..." />}
     </SafeAreaView>
   );
 };
