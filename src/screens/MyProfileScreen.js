@@ -83,6 +83,7 @@ const MyProfileScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <ScrollView>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButtonContainer}>
           <Icon name="chevron-back" size={30} color="#111" />
@@ -98,7 +99,7 @@ const MyProfileScreen = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView contentContainerStyle={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Text style={styles.label}>Name</Text>
             <TextInput value={name} onChangeText={setName} style={styles.input} />
 
@@ -135,6 +136,7 @@ const MyProfileScreen = ({ navigation }) => {
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 };

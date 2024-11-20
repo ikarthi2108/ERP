@@ -139,20 +139,34 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 8,
   },
+  imageWrapper: {
+    position: 'relative', // Ensure position for overlaying the button
+    marginTop: 10,
+    marginBottom: 10,
+    width: 150, // Adjust based on your layout
+    height: 150, // Adjust based on your layout
+    borderRadius: 10,
+    overflow: 'hidden', // To clip the image edges
+  },
+  selectedImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
   removeButton: {
     position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: '#fefcfc',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
+    top: 5, 
+    right: 5, 
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+    borderRadius: 15, 
+    width: 30, 
+    height: 30, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   removeButtonText: {
-    color: '#111',
-    fontSize: 12,
+    color: '#fff', // White text color
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

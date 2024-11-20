@@ -95,25 +95,27 @@ const AddNewForm = () => {
     }
   };
 
-  const handleImageSelection = () => {
-    ImagePicker.openPicker({
-      multiple: true,
-      mediaType: 'photo',
-      maxFiles: 3, // Allow up to 3 images
-      compressImageQuality: 0.4,
-      includeBase64: true,
-    })
-      .then(images => {
-        if (images.length > 3) {
-          console.log('You can select up to 3 images only.');
-          return;
-        }
+const handleImageSelection = () => {
+  if (selectedImages.length > 0) {
+    Alert.alert('Image Already Selected', 'You can only select one image.', [
+      {text: 'OK'},
+    ]);
+    return;
+  }
 
-        const base64Images = images.map(image => image.data);
-        setSelectedImages(prevImages => [...prevImages, ...base64Images]); // Append new images
-      })
-      .catch(error => console.error('Error selecting images:', error));
-  };
+  ImagePicker.openPicker({
+    multiple: false, // Single image selection
+    mediaType: 'photo',
+    compressImageQuality: 0.4,
+    includeBase64: true,
+  })
+    .then(image => {
+      // Since 'multiple' is false, 'image' is a single object
+      const base64Image = image.data; // Access the base64 data
+      setSelectedImages([base64Image]); // Replace the existing image
+    })
+    .catch(error => console.error('Error selecting images:', error));
+};
 
   const handleRemoveImage = () => {
     setSelectedImages([]);

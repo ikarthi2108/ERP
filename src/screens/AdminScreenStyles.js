@@ -42,7 +42,7 @@ const AdminScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#dac5c5',
+    backgroundColor: '#f7afaf',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },

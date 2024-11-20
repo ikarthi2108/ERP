@@ -3,12 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f3f3f3', // Lighter background for contrast
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff', // Changed background color for profile form
+    backgroundColor: '#f3f3f3',
   },
   headerContainer: {
     flexDirection: 'row',
@@ -29,6 +24,11 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
   label: {
     fontSize: 16,
     fontWeight: '600',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3, // Slight shadow effect
+    elevation: 3,
   },
   inputDisabled: {
     backgroundColor: '#e9ecef',
@@ -59,12 +59,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     shadowOpacity: 0.05,
     shadowRadius: 5,
-    elevation: 2, // Subtle shadow for disabled input
+    elevation: 2,
   },
   textArea: {
     height: 100,
     textAlignVertical: 'top',
-    borderRadius: 10, // Rounded corners for textarea
+    borderRadius: 10,
   },
   updateButton: {
     backgroundColor: '#ff7f7f',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3, // Button shadow for depth
+    elevation: 3,
   },
   updateButtonText: {
     color: '#111',
