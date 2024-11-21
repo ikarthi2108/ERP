@@ -455,7 +455,7 @@ import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import {uploadImageToS3} from '../api/s3Uploader'; // Adjust the import path as necessary
 
 // const API_URL = 'http://172.20.10.7:5000/api/forms';
-const API_URL = 'http://172.20.10.7:5000/api/forms';
+const API_URL = 'https://krishna-a4lf.onrender.com/api/forms';
 
 
 const AddNewForm = () => {
