@@ -14,6 +14,9 @@ import Loader from '../components/Loader';
 // Replace this with your actual backend URL
 const API_URL = 'https://krishna-a4lf.onrender.com/api/users';
 
+// const API_URL = 'http://172.20.10.7:5000/api/users';
+
+
 const AddDealerScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -58,11 +61,11 @@ const AddDealerScreen = ({ navigation }) => {
         >
           <Icon name="chevron-back" size={30} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Add New Dealer</Text>
+        <Text style={styles.headerText}>Add New Employee</Text>
       </View>
 
       <View style={styles.formContainer}>
-        <Text style={styles.label}>Dealer Name</Text>
+        <Text style={styles.label}>Employee Name</Text>
         <TextInput
           style={styles.input}
           value={name}
@@ -91,7 +94,7 @@ const AddDealerScreen = ({ navigation }) => {
         />
 
         <TouchableOpacity style={styles.addButton} onPress={handleAddDealer}>
-          <Text style={styles.addButtonText}>Add Dealer</Text>
+          <Text style={styles.addButtonText}>Add Employee</Text>
         </TouchableOpacity>
       </View>
     </View>

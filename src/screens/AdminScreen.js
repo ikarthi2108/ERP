@@ -199,7 +199,12 @@ const AdminScreen = ({ navigation }) => {
           <TouchableOpacity
             style={AdminScreenStyles.sidebarButton}
             onPress={() => navigation.navigate('AddDealerScreen')}>
-            <Text style={AdminScreenStyles.sidebarButtonText}>Add New Dealer</Text>
+            <Text style={AdminScreenStyles.sidebarButtonText}>Add New Employee</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={AdminScreenStyles.sidebarButton}
+            onPress={() => navigation.navigate('EmployeeList')}>
+            <Text style={AdminScreenStyles.sidebarButtonText}>Employee List</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={AdminScreenStyles.sidebarButton}

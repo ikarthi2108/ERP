@@ -8,13 +8,14 @@ import AddNewForm from './src/screens/AddNewForm';
 import MyProfileScreen from './src/screens/MyProfileScreen';
 import DetailScreen from './src/screens/DetailsScreen';
 import AddDealerScreen from './src/screens/AddDealerScreen';
+import EmployeeList from './src/screens/EmployeeList';
+import EmployeeDetails from './src/screens/EmployeeDetails';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Login"
@@ -41,10 +42,22 @@ const App = () => {
           component={MyProfileScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="Detail" component={DetailScreen}        
+        <Stack.Screen name="Detail" component={DetailScreen} />
+        <Stack.Screen
+          name="AddDealerScreen"
+          component={AddDealerScreen}
+          options={{headerShown: false}}
         />
-        <Stack.Screen name="AddDealerScreen" component={AddDealerScreen}           options={{headerShown: false}}
- />
+          <Stack.Screen
+          name="EmployeeList"
+          component={EmployeeList}
+          options={{headerShown: false}}
+        />
+          <Stack.Screen
+          name="EmployeeDetails"
+          component={EmployeeDetails}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
