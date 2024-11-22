@@ -208,6 +208,11 @@ const AdminScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={AdminScreenStyles.sidebarButton}
+            onPress={() => navigation.navigate('ManageForm')}>
+            <Text style={AdminScreenStyles.sidebarButtonText}>Manage Forms</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={AdminScreenStyles.sidebarButton}
             onPress={showLogoutConfirmation}>
             <Text style={AdminScreenStyles.sidebarButtonText}>Logout</Text>
           </TouchableOpacity>

@@ -9,11 +9,12 @@ import {
   Animated,
   Modal,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Logout from '../utils/Logout';
-import Profile from '../assets/profile.png';
+import Profile from '../assets/profile.png'; // Default profile image
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import styles from './UserScreenStyles';
@@ -89,6 +90,7 @@ const UserScreen = ({ navigation }) => {
   const [empId, setEmpId] = useState(null);
   const [name, setName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [profileSidebar, setProfileSidebar] = useState({});
 
   useEffect(() => {
     const getUserData = async () => {
@@ -103,8 +105,37 @@ const UserScreen = ({ navigation }) => {
         console.error('Error getting user data from AsyncStorage', error);
       }
     };
-
     getUserData();
+  }, []);
+
+  const API_URL = 'https://krishna-a4lf.onrender.com/api/users';
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      setIsLoading(true); // Show loader when fetching data
+      try {
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const { emp_id } = JSON.parse(storedUserData);
+
+          // Fetch user data from the backend
+          const response = await axios.get(`${API_URL}/profile/${emp_id}`);
+          const userData = response.data;
+          console.log('User Data:', userData);
+
+          setProfileSidebar(userData); 
+        } else {
+          console.log('No user data found in AsyncStorage.');
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error.response?.data || error.message);
+        Alert.alert('Error', 'Failed to load user data.');
+      } finally {
+        setIsLoading(false); // Hide loader after data is loaded
+      }
+    };
+
+    fetchProfileData();
   }, []);
 
   const fetchData = async () => {
@@ -112,8 +143,11 @@ const UserScreen = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.get(`https://krishna-a4lf.onrender.com/api/forms/${empId}`);
+      const response = await axios.get(
+        `https://krishna-a4lf.onrender.com/api/forms/${empId}`
+      );
       const { pending, approved, rejected } = response.data;
+
       setPendingData(pending);
       setApprovedData(approved);
       setRejectedData(rejected);
@@ -135,7 +169,7 @@ const UserScreen = ({ navigation }) => {
       setApprovedCount(approvedCount);
       setRejectedCount(rejectedCount);
     } catch (error) {
-      console.error('Error fetching data by emp_id:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -216,7 +250,14 @@ const UserScreen = ({ navigation }) => {
         style={[styles.drawerContainer, { transform: [{ translateX: drawerAnimation }] }]}
       >
         <View style={styles.profileContainer}>
-          <Image source={Profile} style={styles.drawerProfileImage} />
+          <Image
+            source={
+              profileSidebar.profile_img
+                ? { uri: profileSidebar.profile_img }
+                : Profile
+            }
+            style={styles.drawerProfileImage}
+          />
           <Text style={styles.drawerUserName}>{name}</Text>
           <Text style={styles.drawerUserId}>{empId}</Text>
         </View>
