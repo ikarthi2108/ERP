@@ -413,7 +413,6 @@ const AddNewForm = () => {
               placeholder: 'DTP No',
               value: dtpNo,
               setter: setDtpNo,
-              keyboardType: 'number-pad',
             },
           ]}
           keyExtractor={(item, index) => index.toString()}
@@ -463,7 +462,6 @@ const AddNewForm = () => {
                   style={styles.input}
                   value={regNo}
                   onChangeText={setRegNo}
-                  keyboardType="number-pad"
                 />
                 <Text style={styles.label}>Category</Text>
                 <DropDownPicker
