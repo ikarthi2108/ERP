@@ -1,73 +1,69 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f2f6f9',
+    backgroundColor: '#f4f4f8',
   },
   header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 15,
     textAlign: 'center',
-    color: '#333',
-    fontFamily: 'System',
+    color: '#444',
   },
   detailContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 5,
-    marginBottom: 30,
+    elevation: 4,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  icon: {
+    marginRight: 8,
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 5,
-    color: '#444',
+    fontWeight: '500',
+    color: '#333',
   },
   value: {
     fontSize: 16,
-    marginBottom: 15,
-    color: '#666',
-  },
-  image: {
-    width: '100%',
-    height: 250,
-    borderRadius: 12,
-    marginBottom: 20,
-    resizeMode: 'cover',
+    color: '#555',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 25,
+    marginTop: 20,
   },
   button: {
     flex: 1,
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: 'center',
     marginHorizontal: 5,
   },
   acceptButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#4caf50',
   },
   rejectButton: {
-    backgroundColor: '#dc3545',
+    backgroundColor: '#e53935',
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: '600',
     color: '#fff',
+    fontWeight: '600',
   },
-
-  // Modal styles
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -83,18 +79,19 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: '700',
+    marginBottom: 15,
+    textAlign: 'center',
   },
   modalInput: {
     width: '100%',
     height: 100,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
     borderWidth: 1,
     borderRadius: 8,
     padding: 10,
-    marginBottom: 20,
     textAlignVertical: 'top',
+    marginBottom: 15,
   },
   modalButtons: {
     flexDirection: 'row',

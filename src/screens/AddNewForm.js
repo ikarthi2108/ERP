@@ -23,7 +23,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from '../components/Loader';
 import Geolocation from 'react-native-geolocation-service';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
-import RNFS from 'react-native-fs';
 import { uploadImageToS3 } from '../api/s3Uploader'; // Adjust the import path as necessary
 
 const API_URL1 = 'https://krishna-a4lf.onrender.com/api/dropdownData';
@@ -408,7 +407,6 @@ const AddNewForm = () => {
               placeholder: 'GST No',
               value: gstNo,
               setter: setGstNo,
-              keyboardType: 'number-pad',
             },
             {
               type: 'text',

@@ -12,9 +12,12 @@ import {
 } from 'react-native';
 import styles from './DetailsScreenStyles';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const DetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
+  console.log(item);
+  
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [reason, setReason] = useState('');
@@ -86,56 +89,134 @@ const DetailScreen = ({ route, navigation }) => {
       });
   };
 
+  const getStatusColor = () => {
+    if (item.isAccepted) return '#ccead3'; // Green
+    if (item.isRejected) return '#ce6c76'; // Red
+    return '#dfd6ba'; // Yellow (Pending)
+  };
+
+  // Parse latitude and longitude from location string
+  const [latitude, longitude] = item.location
+    ? item.location.split(',').map((value) => value.trim())
+    : ['N/A', 'N/A'];
+
+  // Split createdTime into date and time
+  const createdDateTime = item.createdTime ? new Date(item.createdTime) : null;
+  const createdDate = createdDateTime ? createdDateTime.toLocaleDateString() : 'N/A';
+  const createdTime = createdDateTime ? createdDateTime.toLocaleTimeString() : 'N/A';
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.label}>Request ID:</Text>
       <Text style={styles.requestId}>{item.requestId}</Text>
       <Text style={styles.header}>Item Details</Text>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Enterprise Name:</Text>
-        <Text style={styles.value}>{item.enterpriseName}</Text>
-        <Text style={styles.label}>Owner:</Text>
-        <Text style={styles.value}>{item.ownerName}</Text>
-        <Text style={styles.label}>Address:</Text>
-        <Text style={styles.value}>{item.address}</Text>
-        <Text style={styles.label}>City:</Text>
-        <Text style={styles.value}>{item.city}</Text>
-        <Text style={styles.label}>Pincode:</Text>
-        <Text style={styles.value}>{item.pincode}</Text>
-        <Text style={styles.label}>Mobile No:</Text>
-        <Text style={styles.value}>{item.mobileNo}</Text>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{item.email}</Text>
-        <Text style={styles.label}>GST No:</Text>
-        <Text style={styles.value}>{item.gstNo}</Text>
-        <Text style={styles.label}>DTP No:</Text>
-        <Text style={styles.value}>{item.dtpNo}</Text>
-        <Text style={styles.label}>Other Reg No:</Text>
-        <Text style={styles.value}>{item.regNo}</Text>
-        <Text style={styles.label}>Category:</Text>
-        <Text style={styles.value}>{item.category}</Text>
-        <Text style={styles.label}>SubCategory:</Text>
-        <Text style={styles.value}>{item.subCategory}</Text>
-        <Text style={styles.label}>Dealer Name:</Text>
-        <Text style={styles.value}>{item.dealer}</Text>
-        <Text style={styles.label}>Additional Items:</Text>
-        <Text style={styles.value}>{item.additionalItems}</Text>
-        <Text style={styles.label}>Created Date & Time:</Text>
-        <Text style={styles.value}>
-          {item.createdDate} {item.createdTime}
-        </Text>
+      <View style={[styles.detailContainer, { backgroundColor: getStatusColor() }]}>
+        <View style={styles.detailRow}>
+          <Icon name="business" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Enterprise Name:</Text>
+          <Text style={styles.value}>{item.enterpriseName}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="person" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Owner:</Text>
+          <Text style={styles.value}>{item.ownerName}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="location-on" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Latitude:</Text>
+          <Text style={styles.value}>{latitude}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="location-on" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Longitude:</Text>
+          <Text style={styles.value}>{longitude}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="home" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Address:</Text>
+          <Text style={styles.value}>{item.address}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="location-city" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>City:</Text>
+          <Text style={styles.value}>{item.city}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="pin-drop" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Pincode:</Text>
+          <Text style={styles.value}>{item.pincode}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="phone" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Mobile No:</Text>
+          <Text style={styles.value}>{item.mobileNo}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="email" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.value}>{item.email}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="receipt" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>GST No:</Text>
+          <Text style={styles.value}>{item.gstNo}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="receipt" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>DTP No:</Text>
+          <Text style={styles.value}>{item.dtpNo}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="receipt" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Other Reg No:</Text>
+          <Text style={styles.value}>{item.regNo}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="category" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Category:</Text>
+          <Text style={styles.value}>{item.category}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="category" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>SubCategory:</Text>
+          <Text style={styles.value}>{item.subCategory}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="store" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Dealer Name:</Text>
+          <Text style={styles.value}>{item.dealer}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="add-box" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Additional Items:</Text>
+          <Text style={styles.value}>{item.additionalItems}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="event" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Created Date:</Text>
+          <Text style={styles.value}>{createdDate}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="event" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Created Time:</Text>
+          <Text style={styles.value}>{createdTime}</Text>
+        </View>
 
         {item.actionDate && item.actionTime && (
-          <>
+          <View style={styles.detailRow}>
+            <Icon name="event" size={24} color="#444" style={styles.icon} />
             <Text style={styles.label}>Action Date & Time:</Text>
             <Text style={styles.value}>
               {item.actionDate} {item.actionTime}
             </Text>
-          </>
+          </View>
         )}
 
-        <Text style={styles.label}>Reason:</Text>
-        <Text style={styles.value}>{item.reason || 'N/A'}</Text>
+        <View style={styles.detailRow}>
+          <Icon name="info" size={24} color="#444" style={styles.icon} />
+          <Text style={styles.label}>Reason:</Text>
+          <Text style={styles.value}>{item.reason || 'N/A'}</Text>
+        </View>
 
         {item.img1 && (
           <Image
@@ -168,6 +249,17 @@ const DetailScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
         )}
+      </View>
+
+      {/* Status Button */}
+      <View style={styles.statusButtonContainer}>
+        <TouchableOpacity
+          style={[styles.statusButton, { backgroundColor: getStatusColor() }]}
+          disabled={true}>
+          <Text style={styles.statusButtonText}>
+            {item.isAccepted ? 'Accepted' : item.isRejected ? 'Rejected' : 'Pending'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Modal for rejection reason */}

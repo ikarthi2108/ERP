@@ -70,7 +70,7 @@ const AddDealerScreen = ({ navigation }) => {
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Enter Dealer's Name"
+          placeholder="Enter Employee's Name"
           placeholderTextColor="#aaa"
         />
 

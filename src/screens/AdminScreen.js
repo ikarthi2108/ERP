@@ -138,6 +138,8 @@ const AdminScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const response = await axios.get(API_URL);
+      console.log(response.data);
+
       if (response.status === 200) {
         const groupedData = groupDataByStatus(response.data);
         setData(groupedData);

@@ -39,6 +39,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#FF6A6A',
   },
   profileImage: {
     width: 60,
@@ -167,12 +169,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
   modalText: {
-    marginTop: 10,
     fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#FF6A6A',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  closeButtonText: {
     color: 'white',
+    fontWeight: 'bold',
   },
 });
-
 
 export default styles;

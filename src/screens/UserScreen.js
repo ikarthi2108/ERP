@@ -21,11 +21,11 @@ import styles from './UserScreenStyles';
 
 const Tab = createMaterialTopTabNavigator();
 
-const Card = ({ item, status }) => (
-  <View style={styles.cardContainer}>
+const Card = ({ item, status, onPress }) => (
+  <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
     <Image source={Profile} style={styles.profileImage} />
     <View style={styles.cardContent}>
-      <Text style={styles.companyName}> Req ID: {item.requestId || 'N/A'}</Text>
+      <Text style={styles.companyName}>Req ID: {item.requestId || 'N/A'}</Text>
       <Text style={styles.companyName}>{item.enterpriseName || 'N/A'}</Text>
       <Text style={styles.infoText}>Owner: {item.ownerName || 'N/A'}</Text>
       <Text style={styles.infoText}>Serial No: {item.regNo || 'N/A'}</Text>
@@ -42,10 +42,10 @@ const Card = ({ item, status }) => (
     <View style={styles.statusContainer}>
       <Text style={styles.statusText}>{status}</Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
-const DataListScreen = ({ data, status, isLoading }) => {
+const DataListScreen = ({ data, status, isLoading, onCardPress }) => {
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
@@ -69,7 +69,7 @@ const DataListScreen = ({ data, status, isLoading }) => {
         <View key={date}>
           <Text style={styles.sectionTitle}>{date}</Text>
           {data[date].map((item, index) => (
-            <Card key={`${date}-${index}`} item={item} status={status} />
+            <Card key={`${date}-${index}`} item={item} status={status} onPress={() => onCardPress(item)} />
           ))}
         </View>
       ))}
@@ -91,6 +91,7 @@ const UserScreen = ({ navigation }) => {
   const [name, setName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [profileSidebar, setProfileSidebar] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -200,6 +201,14 @@ const UserScreen = ({ navigation }) => {
     }
   };
 
+  const handleCardPress = (item) => {
+    setSelectedItem(item);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedItem(null);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.headerContainer}>
@@ -221,17 +230,17 @@ const UserScreen = ({ navigation }) => {
       >
         <Tab.Screen
           name="UserPendingScreen"
-          children={() => <DataListScreen data={pendingData} status="Pending" isLoading={isLoading} />}
+          children={() => <DataListScreen data={pendingData} status="Pending" isLoading={isLoading} onCardPress={handleCardPress} />}
           options={{ title: `Pending (${pendingCount})` }}
         />
         <Tab.Screen
           name="UserApprovalScreen"
-          children={() => <DataListScreen data={approvedData} status="Approved" isLoading={isLoading} />}
+          children={() => <DataListScreen data={approvedData} status="Approved" isLoading={isLoading} onCardPress={handleCardPress} />}
           options={{ title: `Approved (${approvedCount})` }}
         />
         <Tab.Screen
           name="UserRejectedScreen"
-          children={() => <DataListScreen data={rejectedData} status="Rejected" isLoading={isLoading} />}
+          children={() => <DataListScreen data={rejectedData} status="Rejected" isLoading={isLoading} onCardPress={handleCardPress} />}
           options={{ title: `Rejected (${rejectedCount})` }}
         />
       </Tab.Navigator>
@@ -277,6 +286,35 @@ const UserScreen = ({ navigation }) => {
           <Text style={styles.drawerLabel}>Log Out</Text>
         </TouchableOpacity>
       </Animated.View>
+
+      <Modal visible={selectedItem !== null} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Full Details</Text>
+            <Text style={styles.modalText}>Req ID: {selectedItem?.requestId || 'N/A'}</Text>
+            <Text style={styles.modalText}>Enterprise Name: {selectedItem?.enterpriseName || 'N/A'}</Text>
+            <Text style={styles.modalText}>Owner Name: {selectedItem?.ownerName || 'N/A'}</Text>
+            <Text style={styles.modalText}>Address: {selectedItem?.address || 'N/A'}</Text>
+            <Text style={styles.modalText}>City: {selectedItem?.city || 'N/A'}</Text>
+            <Text style={styles.modalText}>Pincode: {selectedItem?.pincode || 'N/A'}</Text>
+            <Text style={styles.modalText}>Mobile No: {selectedItem?.mobileNo || 'N/A'}</Text>
+            <Text style={styles.modalText}>Email: {selectedItem?.email || 'N/A'}</Text>
+            <Text style={styles.modalText}>GST No: {selectedItem?.gstNo || 'N/A'}</Text>
+            <Text style={styles.modalText}>DTP No: {selectedItem?.dtpNo || 'N/A'}</Text>
+            <Text style={styles.modalText}>Location: {selectedItem?.location || 'N/A'}</Text>
+            <Text style={styles.modalText}>Reg No: {selectedItem?.regNo || 'N/A'}</Text>
+            <Text style={styles.modalText}>Category: {selectedItem?.category || 'N/A'}</Text>
+            <Text style={styles.modalText}>Sub Category: {selectedItem?.subCategory || 'N/A'}</Text>
+            <Text style={styles.modalText}>Dealer: {selectedItem?.dealer || 'N/A'}</Text>
+            <Text style={styles.modalText}>Additional Items: {selectedItem?.additionalItems || 'N/A'}</Text>
+            <Text style={styles.modalText}>Created Date: {selectedItem?.createdDate || 'N/A'}</Text>
+            <Text style={styles.modalText}>Created Time: {selectedItem?.createdTime || 'N/A'}</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Modal visible={loading} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
