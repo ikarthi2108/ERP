@@ -98,6 +98,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
+  imageContainer: {
+    marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    marginVertical: 5,
+    backgroundColor:'gray'
+  },
 });
 
 export default styles;

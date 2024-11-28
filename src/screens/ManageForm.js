@@ -16,6 +16,9 @@ import styles from './ManageFormStyles';
 
 const API_URL = 'https://krishna-a4lf.onrender.com/api/dropdownData';
 
+// const API_URL = 'http://103.235.106.98:5000/api/dropdownData';
+
+
 const ManageForm = () => {
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
@@ -143,55 +146,64 @@ const ManageForm = () => {
   };
   
 
-  const renderSection = (title, key) => (
-    <View>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {dropdownData.map(item => (
-        <View style={styles.itemContainer} key={item._id}>
-          {editingId === item._id && editingField === key ? (
-            <View style={styles.inlineEditContainer}>
-              <TextInput
-                style={styles.inlineEditInput}
-                value={editingValue}
-                onChangeText={setEditingValue}
-                placeholder="Edit value"
-              />
-              <TouchableOpacity
-                style={styles.inlineEditButton}
-                onPress={handleSaveEdit}>
-                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.inlineEditCancelButton}
-                onPress={() => {
-                  setEditingId(null);
-                  setEditingField(null);
-                  setEditingValue('');
-                }}>
-                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <>
-              <Text style={styles.itemText}>{item[key] || 'No data'}</Text>
-              <View style={styles.actions}>
+  const renderSection = (title, key) => {
+    // Filter out items where the key's value is null, undefined, or an empty string
+    const filteredData = dropdownData.filter(item => item[key]);
+  
+    // If no data is available for this section, do not render it
+    if (filteredData.length === 0) return null;
+  
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {filteredData.map(item => (
+          <View style={styles.itemContainer} key={item._id}>
+            {editingId === item._id && editingField === key ? (
+              <View style={styles.inlineEditContainer}>
+                <TextInput
+                  style={styles.inlineEditInput}
+                  value={editingValue}
+                  onChangeText={setEditingValue}
+                  placeholder="Edit value"
+                />
                 <TouchableOpacity
-                  style={styles.iconButton}
-                  onPress={() => handleEdit(item, key)}>
-                  <Icon name="edit" size={20} color="#fff" />
+                  style={styles.inlineEditButton}
+                  onPress={handleSaveEdit}>
+                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>Save</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.iconButton, styles.deleteButton]}
-                  onPress={() => handleDelete(item._id, key)}>
-                  <Icon name="delete" size={20} color="#fff" />
+                  style={styles.inlineEditCancelButton}
+                  onPress={() => {
+                    setEditingId(null);
+                    setEditingField(null);
+                    setEditingValue('');
+                  }}>
+                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cancel</Text>
                 </TouchableOpacity>
               </View>
-            </>
-          )}
-        </View>
-      ))}
-    </View>
-  );
+            ) : (
+              <>
+                <Text style={styles.itemText}>{item[key]}</Text>
+                <View style={styles.actions}>
+                  <TouchableOpacity
+                    style={styles.iconButton}
+                    onPress={() => handleEdit(item, key)}>
+                    <Icon name="edit" size={20} color="#fff" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.iconButton, styles.deleteButton]}
+                    onPress={() => handleDelete(item._id, key)}>
+                    <Icon name="delete" size={20} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+  
 
   return (
     <ScrollView

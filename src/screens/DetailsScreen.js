@@ -22,12 +22,12 @@ const DetailScreen = ({ route, navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [reason, setReason] = useState('');
 
-  const BASE_URL = 'https://krishna-a4lf.onrender.com/api/forms'; 
+  const API_URL = 'https://krishna-a4lf.onrender.com/api/forms';
 
   const updateFormStatus = async (id, isAccepted, isRejected, reason = null) => {
     try {
       setLoading(true);
-      const response = await axios.put(`${BASE_URL}/${id}/update-status`, {
+      const response = await axios.put(`${API_URL}/${id}/update-status`, {
         isAccepted,
         isRejected,
         reason,
@@ -104,6 +104,12 @@ const DetailScreen = ({ route, navigation }) => {
   const createdDateTime = item.createdTime ? new Date(item.createdTime) : null;
   const createdDate = createdDateTime ? createdDateTime.toLocaleDateString() : 'N/A';
   const createdTime = createdDateTime ? createdDateTime.toLocaleTimeString() : 'N/A';
+
+  // Check if there are any images to display
+  const hasImages = [
+    item.img1, item.img2, item.img3, item.img4, item.img5,
+    item.img6, item.img7, item.img8, item.img9, item.img10
+  ].some(img => img);
 
   return (
     <ScrollView style={styles.container}>
@@ -201,7 +207,7 @@ const DetailScreen = ({ route, navigation }) => {
           <Text style={styles.label}>Created Time:</Text>
           <Text style={styles.value}>{createdTime}</Text>
         </View>
-
+        
         {item.actionDate && item.actionTime && (
           <View style={styles.detailRow}>
             <Icon name="event" size={24} color="#444" style={styles.icon} />
@@ -218,11 +224,70 @@ const DetailScreen = ({ route, navigation }) => {
           <Text style={styles.value}>{item.reason || 'N/A'}</Text>
         </View>
 
-        {item.img1 && (
-          <Image
-            source={{ uri: `data:image/jpeg;base64,${item.img1}` }}
-            style={styles.image}
-          />
+        {/* Display images if they are not null or empty */}
+        {hasImages && (
+          <View style={styles.imageContainer}>
+            {item.img1 && (
+              <Image
+                source={{ uri: item.img1 }}
+                style={styles.image}
+              />
+            )}
+            {item.img2 && (
+              <Image
+                source={{ uri: item.img2 }}
+                style={styles.image}
+              />
+            )}
+            {item.img3 && (
+              <Image
+                source={{ uri: item.img3 }}
+                style={styles.image}
+              />
+            )}
+            {item.img4 && (
+              <Image
+                source={{ uri: item.img4 }}
+                style={styles.image}
+              />
+            )}
+            {item.img5 && (
+              <Image
+                source={{ uri: item.img5 }}
+                style={styles.image}
+              />
+            )}
+            {item.img6 && (
+              <Image
+                source={{ uri: item.img6 }}
+                style={styles.image}
+              />
+            )}
+            {item.img7 && (
+              <Image
+                source={{ uri: item.img7 }}
+                style={styles.image}
+              />
+            )}
+            {item.img8 && (
+              <Image
+                source={{ uri: item.img8 }}
+                style={styles.image}
+              />
+            )}
+            {item.img9 && (
+              <Image
+                source={{ uri: item.img9 }}
+                style={styles.image}
+              />
+            )}
+            {item.img10 && (
+              <Image
+                source={{ uri: item.img10 }}
+                style={styles.image}
+              />
+            )}
+          </View>
         )}
 
         {!item.isAccepted && !item.isRejected && (

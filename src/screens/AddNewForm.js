@@ -26,8 +26,11 @@ import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { uploadImageToS3 } from '../api/s3Uploader'; // Adjust the import path as necessary
 
 const API_URL1 = 'https://krishna-a4lf.onrender.com/api/dropdownData';
+// const API_URL1 = 'http://103.235.106.98:5000/api/dropdownData';
+
 
 const API_URL = 'https://krishna-a4lf.onrender.com/api/forms';
+// const API_URL = 'http://103.235.106.98:5000/api/forms';
 
 
 const AddNewForm = () => {
@@ -95,12 +98,26 @@ const AddNewForm = () => {
     try {
       const response = await axios.get(API_URL1);
       const data = response.data;
-
-      const categories = [...new Set(data.map(item => item.category))].map(cat => ({ label: cat, value: cat }));
-      const subCategories = [...new Set(data.map(item => item.subCategory))].map(subCat => ({ label: subCat, value: subCat }));
-      const dealers = [...new Set(data.map(item => item.dealer))].map(dealer => ({ label: dealer, value: dealer }));
-      const additionalItems = [...new Set(data.map(item => item.additionalItem))].map(addItem => ({ label: addItem, value: addItem }));
-
+  
+      // Filter out empty strings and ensure unique values
+      const categories = [...new Set(data.map(item => item.category).filter(cat => cat))].map(cat => ({
+        label: cat,
+        value: cat,
+      }));
+      const subCategories = [...new Set(data.map(item => item.subCategory).filter(subCat => subCat))].map(subCat => ({
+        label: subCat,
+        value: subCat,
+      }));
+      const dealers = [...new Set(data.map(item => item.dealer).filter(dealer => dealer))].map(dealer => ({
+        label: dealer,
+        value: dealer,
+      }));
+      const additionalItems = [...new Set(data.map(item => item.additionalItem).filter(addItem => addItem))].map(addItem => ({
+        label: addItem,
+        value: addItem,
+      }));
+  
+      // Update state with filtered data
       setCategoryItems(categories);
       setSubCategoryItems(subCategories);
       setDealerItems(dealers);
@@ -109,6 +126,7 @@ const AddNewForm = () => {
       console.error('Error fetching dropdown data:', error);
     }
   };
+  
 
   const handleImageSelection = () => {
     const options = {
@@ -580,7 +598,7 @@ const AddNewForm = () => {
           }
         />
       </KeyboardAvoidingView>
-      {loading && <Loader message="Submitting your form..." />}
+      {loading && <Loader message="Loading...." />}
     </SafeAreaView>
   );
 };

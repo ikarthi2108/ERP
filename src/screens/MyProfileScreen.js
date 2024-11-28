@@ -26,6 +26,9 @@ import { uploadImageToS3 } from '../api/s3Uploader';
 
 const API_URL = 'https://krishna-a4lf.onrender.com/api/users';
 
+// const API_URL = 'http://103.235.106.98:5000/api/users';
+
+
 
 const MyProfileScreen = ({ navigation }) => {
   const [name, setName] = useState('');

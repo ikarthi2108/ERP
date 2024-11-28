@@ -14,6 +14,9 @@ import Loader from '../components/Loader';
 // Replace this with your actual backend URL
 const API_URL = 'https://krishna-a4lf.onrender.com/api/users';
 
+// const API_URL = 'http://103.235.106.98:5000/api/users';
+
+
 // const API_URL = 'http://172.20.10.7:5000/api/users';
 
 

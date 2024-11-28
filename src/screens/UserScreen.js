@@ -91,7 +91,6 @@ const UserScreen = ({ navigation }) => {
   const [name, setName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [profileSidebar, setProfileSidebar] = useState({});
-  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -202,11 +201,7 @@ const UserScreen = ({ navigation }) => {
   };
 
   const handleCardPress = (item) => {
-    setSelectedItem(item);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedItem(null);
+    navigation.navigate('UserDetailScreen', { item });
   };
 
   return (
@@ -286,35 +281,6 @@ const UserScreen = ({ navigation }) => {
           <Text style={styles.drawerLabel}>Log Out</Text>
         </TouchableOpacity>
       </Animated.View>
-
-      <Modal visible={selectedItem !== null} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Full Details</Text>
-            <Text style={styles.modalText}>Req ID: {selectedItem?.requestId || 'N/A'}</Text>
-            <Text style={styles.modalText}>Enterprise Name: {selectedItem?.enterpriseName || 'N/A'}</Text>
-            <Text style={styles.modalText}>Owner Name: {selectedItem?.ownerName || 'N/A'}</Text>
-            <Text style={styles.modalText}>Address: {selectedItem?.address || 'N/A'}</Text>
-            <Text style={styles.modalText}>City: {selectedItem?.city || 'N/A'}</Text>
-            <Text style={styles.modalText}>Pincode: {selectedItem?.pincode || 'N/A'}</Text>
-            <Text style={styles.modalText}>Mobile No: {selectedItem?.mobileNo || 'N/A'}</Text>
-            <Text style={styles.modalText}>Email: {selectedItem?.email || 'N/A'}</Text>
-            <Text style={styles.modalText}>GST No: {selectedItem?.gstNo || 'N/A'}</Text>
-            <Text style={styles.modalText}>DTP No: {selectedItem?.dtpNo || 'N/A'}</Text>
-            <Text style={styles.modalText}>Location: {selectedItem?.location || 'N/A'}</Text>
-            <Text style={styles.modalText}>Reg No: {selectedItem?.regNo || 'N/A'}</Text>
-            <Text style={styles.modalText}>Category: {selectedItem?.category || 'N/A'}</Text>
-            <Text style={styles.modalText}>Sub Category: {selectedItem?.subCategory || 'N/A'}</Text>
-            <Text style={styles.modalText}>Dealer: {selectedItem?.dealer || 'N/A'}</Text>
-            <Text style={styles.modalText}>Additional Items: {selectedItem?.additionalItems || 'N/A'}</Text>
-            <Text style={styles.modalText}>Created Date: {selectedItem?.createdDate || 'N/A'}</Text>
-            <Text style={styles.modalText}>Created Time: {selectedItem?.createdTime || 'N/A'}</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       <Modal visible={loading} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>

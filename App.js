@@ -11,6 +11,7 @@ import AddDealerScreen from './src/screens/AddDealerScreen';
 import EmployeeList from './src/screens/EmployeeList';
 import EmployeeDetails from './src/screens/EmployeeDetails';
 import ManageForm from './src/screens/ManageForm';
+import UserDetailScreen from './src/screens/UserDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,21 +50,22 @@ const App = () => {
           component={AddDealerScreen}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="EmployeeList"
           component={EmployeeList}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="EmployeeDetails"
           component={EmployeeDetails}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="ManageForm"
           component={ManageForm}
-          options={{headerShown: false}}
+          options={{headerShown: true}}
         />
+        <Stack.Screen name="UserDetailScreen" component={UserDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
